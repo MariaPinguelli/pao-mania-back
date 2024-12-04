@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ".:/app"
+      - "bundle:/usr/local/bundle"
+    depends_on:
+      - db
+    environment:
+      APP_URL: "http://localhost:3000"
+      DATABASE_URL: "postgresql://postgres:password@db:5432/pao_mania_db"
+
+  db:
+    image: postgres:14
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: pao_mania_db
+
+volumes:
+  bundle:
+  db-data:
