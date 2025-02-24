@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  mount Motor::Admin => '/motor_admin'
+  mount Motor::Admin => "/motor_admin"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -12,4 +12,14 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  #
+  # Rotas do Devise para autenticação
+  devise_for :users, controllers: {
+  registrations: "users/registrations"
+}
+
+  resources :products
+  root to: "products#index"
+
+  resources :orders, only: [ :index, :create, :show, :update ]
 end
