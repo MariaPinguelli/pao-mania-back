@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   # Exige que o usuário esteja logado
   before_action :authenticate_user!
+  respond_to :json
 
   # Ação de exclusão de usuário
   def desactivate
