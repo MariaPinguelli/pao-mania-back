@@ -1,5 +1,13 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!, except: [ :index ]
+  # Exige que o usuário esteja logado
+  respond_to :json
+
+  devise :database_authenticatable, :registerable, :jwt_authenticatable, jwt_revocation_strategy: JwtBlacklist
+  def index
+    @users = User.all
+    render json: @users
+  end
 
   # Ação para listar usuários
   def index

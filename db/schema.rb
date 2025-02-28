@@ -207,6 +207,34 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_24_195034) do
     t.index ["name"], name: "motor_tags_name_unique_index", unique: true
   end
 
+  create_table "order_items", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.bigint "product_id", null: false
+    t.integer "quantity"
+    t.decimal "price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.index ["product_id"], name: "index_order_items_on_product_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.decimal "total_price"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.decimal "price", precision: 10, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -227,4 +255,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_24_195034) do
   add_foreign_key "motor_note_tag_tags", "motor_note_tags", column: "tag_id"
   add_foreign_key "motor_note_tag_tags", "motor_notes", column: "note_id"
   add_foreign_key "motor_taggable_tags", "motor_tags", column: "tag_id"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "order_items", "products"
+  add_foreign_key "orders", "users"
 end
