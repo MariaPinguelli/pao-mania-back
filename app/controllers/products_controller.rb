@@ -4,6 +4,7 @@ class ProductsController < ApplicationController
   # Lista todos os produtos
   def index
     @products = Product.all
+    render json: @products
   end
 
   # Exibe um produto específico
@@ -32,16 +33,16 @@ class ProductsController < ApplicationController
   # Atualiza um produto existente
   def update
     if @product.update(product_params)
-      redirect_to @product, notice: "Produto atualizado com sucesso."
+      render json: @product, status: :ok
     else
-      render :edit
+      render json: @product, status: 500
     end
   end
 
   # Exclui um produto
   def destroy
     @product.destroy
-    redirect_to products_url, notice: "Produto excluído com sucesso."
+    head :no_content
   end
 
   private
