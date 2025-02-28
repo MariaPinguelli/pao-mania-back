@@ -1,11 +1,19 @@
 class Users::RegistrationsController < Devise::RegistrationsController
-  # Sobrescreve o método create do Devise para adicionar lógica ao cadastro
+  before_action :authenticate_user!
+
   def create
-    super do |resource|
-      # Verifica se esse é o primeiro usuário
-      if User.count == 1
-        resource.update(admin: true)
-      end
+    # Adiciona o nome junto com email e senha
+    user_params = params.require(:user).permit(:email, :password, :password_confirmation, :name)
+
+    # Cria o usuário com os parâmetros
+    user = User.new(user_params)
+
+    if user.save
+      # Se for o primeiro usuário, torna-o administrador
+      user.update(admin: true) if User.count == 1
+      render json: { message: "Usuário cadastrado com sucesso!", user: user }, status: :created
+    else
+      render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 end
