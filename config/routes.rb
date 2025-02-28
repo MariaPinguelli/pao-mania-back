@@ -18,6 +18,8 @@ Rails.application.routes.draw do
     sessions: "users/sessions",
     registrations: "users/registrations"  # Se você já tiver o RegistrationController personalizado
   }
+
+  resources :users, only: [ :index, :show ]
   resources :products
   root to: "products#index"
 

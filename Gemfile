@@ -32,7 +32,6 @@ gem "bootsnap", require: false
 #
 # Add devise gem for authentication
 gem "devise"
-gem "bcrypt", "~> 3.1.7"
 gem "devise-jwt"
 
 
