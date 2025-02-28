@@ -8,6 +8,6 @@ class Order < ApplicationRecord
 
 
   def calculate_total_price
-    self.total_price = order_items.sum("quantity * price")
+    self.total_price = order_items.sum { |item| item.quantity * item.product.price }
   end
 end
