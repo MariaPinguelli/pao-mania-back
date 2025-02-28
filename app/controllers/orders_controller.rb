@@ -2,13 +2,22 @@ class OrdersController < ApplicationController
   # before_action :authenticate_user!
 
   def index
-    user = User.find(params[:user_id])
-    @orders = Order.where(user_id: params[:user_id]).includes(order_items: :product).all
+    @orders = []
+    user = nil
+
+    if params[:user_id]
+      user = User.find(params[:user_id])
+      @orders = Order.where(user_id: params[:user_id]).includes(order_items: :product).all
+    else
+      @orders = Order.includes(order_items: :product).all
+    end
+
     orders_json = @orders.map do |order|
+      order_user = user ? user : User.find(order.user_id)
       {
         id: order.id,
         user_id: order.user_id,
-        user_name: user.name,
+        user_name: order_user.name,
         total_price: order.total_price.to_f,
         status: order.status,
         created_at: order.created_at,
@@ -50,9 +59,9 @@ class OrdersController < ApplicationController
   end
 
   def update
-    @order = current_user.orders.find(params[:id])
+    @order = Order.find(params[:id])
     if @order.update(order_params)
-      redirect_to @order, notice: "Pedido atualizado!"
+      render json: @order, notice: "Pedido atualizado!"
     else
       render :edit
     end
