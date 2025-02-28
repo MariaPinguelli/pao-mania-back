@@ -15,9 +15,11 @@ Rails.application.routes.draw do
   #
   # Rotas do Devise para autenticação
   devise_for :users, controllers: {
-  sessions: "users/sessions",
-  registrations: "users/registrations"  # Se você já tiver o RegistrationController personalizado
+  registrations: "users/registrations",
+  sessions: "users/sessions"
 }
+
+  resources :users, only: [ :index, :show ]
   resources :products
   root to: "products#index"
 

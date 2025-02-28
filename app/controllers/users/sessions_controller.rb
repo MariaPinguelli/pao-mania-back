@@ -1,14 +1,24 @@
 class Users::SessionsController < Devise::SessionsController
-  respond_to :json
-
+  # Sobrescreve o método create para personalizar o login
   def create
-    self.resource = warden.authenticate!(scope: :user)
-    set_flash_message!(:notice, :signed_in)
-    sign_in(resource_name, resource)
+    # Chama o método original do Devise para autenticar o usuário
+    resource = User.find_for_database_authentication(email: params[:user][:email])
 
-    # Gere o token JWT
-    token = JWT.encode({ user_id: resource.id }, Rails.application.secret_key_base, "HS256")
+    if resource && resource.valid_password?(params[:user][:password])
+      # Gera o token JWT
+      jwt = generate_jwt(resource)
+      render json: { message: "Login realizado com sucesso", user: resource, token: jwt }, status: :ok
+    else
+      # Retorna erro caso as credenciais sejam inválidas
+      render json: { error: "Credenciais inválidas" }, status: :unauthorized
+    end
+  end
 
-    render json: { message: "Login bem-sucedido", user: resource, token: token }, status: :ok
+  private
+
+  # Método para gerar o token JWT
+  def generate_jwt(user)
+    payload = { user_id: user.id, exp: 24.hours.from_now.to_i }
+    JWT.encode(payload, Rails.application.secret_key_base)
   end
 end
